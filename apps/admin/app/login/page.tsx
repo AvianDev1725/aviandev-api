@@ -1,20 +1,44 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!email || !password) {
       setError('Enter your email and password');
       return;
     }
+
     setError('');
-    alert(`Login will be connected in Phase 5 (${email})`);
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? 'Something went wrong. Please try again.');
+        return;
+      }
+
+      router.push('/');
+      router.refresh();
+    } catch {
+      setError('Could not reach the server. Is the API running?');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -64,9 +88,10 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="w-full rounded-lg bg-zinc-900 py-2.5 font-medium text-white hover:bg-zinc-700"
+          disabled={loading}
+          className="w-full rounded-lg bg-zinc-900 py-2.5 font-medium text-white hover:bg-zinc-700 disabled:opacity-60"
         >
-          Sign in
+          {loading ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
     </main>
