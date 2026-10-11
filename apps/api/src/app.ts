@@ -9,8 +9,11 @@ import {
 } from './data/posts.js';
 import { validateJson } from './lib/validate.js';
 import { handleError } from './lib/error.js';
+import auth from './routes/auth.js';
 
 const app = new Hono();
+
+app.route('/auth', auth);
 
 app.get('/', (c) => c.text('Hello Hono!'));
 

@@ -1,17 +1,11 @@
 info:
-  name: Untitled
+  name: auth-me
   type: http
   seq: 1
 
 http:
-  method: POST
-  url: "{{baseUrl}}/posts"
-  body:
-    type: json
-    data: |-
-      {
-        "title": "Test"
-      }
+  method: GET
+  url: "{{baseUrl}}/auth/me"
   auth: inherit
 
 settings:
