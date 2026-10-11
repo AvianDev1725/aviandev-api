@@ -4,3 +4,6 @@ onlyBuiltDependencies:
   - esbuild
 allowBuilds:
   esbuild: true
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver
