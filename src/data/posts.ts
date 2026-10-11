@@ -20,3 +20,17 @@ export async function createPost(input: NewPost) {
   const result = await db.insert(posts).values(input).returning();
   return result[0];
 }
+
+export async function updatePost(id: number, input: Partial<NewPost>) {
+  const result = await db
+    .update(posts)
+    .set(input)
+    .where(eq(posts.id, id))
+    .returning();
+  return result[0];
+}
+
+export async function deletePost(id: number) {
+  const result = await db.delete(posts).where(eq(posts.id, id)).returning();
+  return result[0];
+}
