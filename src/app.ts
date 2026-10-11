@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { createPostSchema, updatePostSchema } from './schemas/post.js';
 import {
   getPublishedPosts,
   getPublishedPostBySlug,
@@ -6,6 +7,8 @@ import {
   updatePost,
   deletePost,
 } from './data/posts.js';
+import { validateJson } from './lib/validate.js';
+import { handleError } from './lib/error.js';
 
 const app = new Hono();
 
@@ -21,17 +24,17 @@ app.get('/posts/:slug', async (c) => {
   return c.json(post);
 });
 
-app.post('/posts', async (c) => {
-  const body = await c.req.json();
+app.post('/posts', validateJson(createPostSchema), async (c) => {
+  const body = c.req.valid('json');
   const post = await createPost(body);
   return c.json(post, 201);
 });
 
-app.patch('/posts/:id', async (c) => {
+app.patch('/posts/:id', validateJson(updatePostSchema), async (c) => {
   const id = Number(c.req.param('id'));
   if (Number.isNaN(id)) return c.json({ error: 'Invalid id' }, 400);
 
-  const body = await c.req.json();
+  const body = c.req.valid('json');
   const post = await updatePost(id, body);
   if (!post) return c.json({ error: 'Post not found' }, 404);
   return c.json(post);
@@ -45,5 +48,8 @@ app.delete('/posts/:id', async (c) => {
   if (!post) return c.json({ error: 'Post not found' }, 404);
   return c.body(null, 204);
 });
+
+app.onError(handleError);
+app.notFound((c) => c.json({ error: 'Route not found' }, 404));
 
 export default app;

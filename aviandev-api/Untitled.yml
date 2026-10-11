@@ -4,11 +4,14 @@ info:
   seq: 1
 
 http:
-  method: DELETE
+  method: POST
   url: "{{baseUrl}}/posts"
   body:
     type: json
-    data: ""
+    data: |-
+      {
+        "title": "Test"
+      }
   auth: inherit
 
 settings:
