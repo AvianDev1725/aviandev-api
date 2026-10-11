@@ -1,17 +1,13 @@
-import { createHash, randomBytes } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
+import { generateToken, hashToken } from './token.js';
 import { sessions, users } from '../db/schema.js';
 
 export const SESSION_COOKIE = 'session';
 const SESSION_DAYS = 7;
 
-function hashToken(token: string) {
-  return createHash('sha256').update(token).digest('hex');
-}
-
 export async function createSession(userId: number) {
-  const token = randomBytes(32).toString('base64url');
+  const token = generateToken();
   const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000);
   await db.insert(sessions).values({ id: hashToken(token), userId, expiresAt });
   return { token, expiresAt };

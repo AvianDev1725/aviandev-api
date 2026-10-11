@@ -1,6 +1,6 @@
 import app from '../src/app.js';
 import { db } from '../src/db/index.js';
-import { users } from '../src/db/schema.js';
+import { invitations, posts, users } from '../src/db/schema.js';
 import { hashPassword } from '../src/lib/password.js';
 
 export const PASSWORD = 'test-password-123';
@@ -34,4 +34,10 @@ export function send(method: string, path: string, cookie?: string, body?: objec
     headers: { 'Content-Type': 'application/json', ...(cookie ? { Cookie: cookie } : {}) },
     body: body ? JSON.stringify(body) : undefined,
   });
+}
+
+export async function resetDb() {
+  await db.delete(invitations);
+  await db.delete(posts);
+  await db.delete(users);
 }

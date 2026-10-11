@@ -13,6 +13,7 @@ import { validateJson } from './lib/validate.js';
 import { handleError } from './lib/error.js';
 import auth from './routes/auth.js';
 import usersRoute from './routes/users.js';
+import invitationsRoute from './routes/invitations.js';
 
 const app = new Hono<AuthEnv>();
 
@@ -25,6 +26,8 @@ function canEditPost(user: SessionUser, post: { authorId: number | null }) {
 app.route('/auth', auth);
 
 app.route('/users', usersRoute);
+
+app.route('/invitations', invitationsRoute);
 
 app.get('/', (c) => c.text('Hello Hono!'));
 

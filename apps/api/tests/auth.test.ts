@@ -3,6 +3,7 @@ import app from '../src/app.js';
 import { db } from '../src/db/index.js';
 import { posts, users } from '../src/db/schema.js';
 import { hashPassword } from '../src/lib/password.js';
+import { resetDb } from './helpers.js';
 
 const PASSWORD = 'test-password-123';
 
@@ -29,8 +30,7 @@ function sessionCookie(res: Response) {
 }
 
 beforeEach(async () => {
-  await db.delete(posts);
-  await db.delete(users);
+  await resetDb();
 });
 
 describe('POST /auth/login', () => {

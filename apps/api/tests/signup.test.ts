@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { eq } from 'drizzle-orm';
 import { db } from '../src/db/index.js';
 import { posts, users } from '../src/db/schema.js';
-import { cookieFor, send, PASSWORD } from './helpers.js';
+import { cookieFor, send, PASSWORD, resetDb } from './helpers.js';
 
 const applicant = { name: 'New Admin', email: 'new@test.com', password: PASSWORD };
 const signup = (body: object = applicant) => send('POST', '/auth/signup', undefined, body);
@@ -11,8 +11,7 @@ const tryLogin = () => send('POST', '/auth/login', undefined, { email: applicant
 let superAdmin: string;
 
 beforeEach(async () => {
-  await db.delete(posts);
-  await db.delete(users);
+  await resetDb();
   superAdmin = await cookieFor('super_admin');
 });
 

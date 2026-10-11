@@ -6,6 +6,12 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/users/2/approve"
+  body:
+    type: json
+    data: |-
+      {
+        "status": "active"
+      }
   auth: inherit
 
 settings:

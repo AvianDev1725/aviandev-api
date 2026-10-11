@@ -8,17 +8,14 @@ import { users } from '../db/schema.js';
 import { hashPassword, verifyPassword } from '../lib/password.js';
 import { createSession, getSessionUser, deleteSession, SESSION_COOKIE } from '../lib/session.js';
 import { validateJson } from '../lib/validate.js';
+import { nameField, emailField, passwordField } from '../schemas/user.js';
 
 const loginSchema = z.object({
   email: z.string().trim().toLowerCase().min(1, 'Email is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
-const signupSchema = z.object({
-  name: z.string().trim().min(1, 'Name is required').max(100),
-  email: z.string().trim().toLowerCase().pipe(z.email('Enter a valid email')),
-  password: z.string().min(12, 'Password must be at least 12 characters').max(128),
-});
+const signupSchema = z.object({ name: nameField, email: emailField, password: passwordField });
 
 const dummyHash = await hashPassword('dummy-password-for-timing');
 

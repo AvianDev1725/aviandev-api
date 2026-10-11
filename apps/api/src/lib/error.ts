@@ -8,7 +8,7 @@ function isUniqueViolation(err: unknown) {
 
 export function handleError(err: Error, c: Context) {
   if (isUniqueViolation(err)) {
-    return c.json({ error: 'A post with this slug already exists' }, 409);
+    return c.json({ error: 'This already exists' }, 409);
   }
   if (err instanceof HTTPException) {
     return c.json({ error: err.message }, err.status);

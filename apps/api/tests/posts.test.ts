@@ -2,13 +2,12 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import app from '../src/app.js';
 import { db } from '../src/db/index.js';
 import { posts, users } from '../src/db/schema.js';
-import { cookieFor, send } from './helpers.js';
+import { cookieFor, send, resetDb } from './helpers.js';
 
 let admin: string;
 
 beforeEach(async () => {
-  await db.delete(posts);
-  await db.delete(users);
+  await resetDb();
   admin = await cookieFor('admin');
 });
 
