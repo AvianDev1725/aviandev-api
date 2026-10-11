@@ -15,6 +15,13 @@
       "when": 1791735392249,
       "tag": "0001_breezy_the_enforcers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791736294310,
+      "tag": "0002_outstanding_charles_xavier",
+      "breakpoints": true
     }
   ]
 }

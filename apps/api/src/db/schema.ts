@@ -1,6 +1,7 @@
-import { pgTable, pgEnum, serial, text, boolean, timestamp, integer } from 'drizzle-orm/pg-core';
+import { pgTable, pgEnum, serial, text, boolean, timestamp, integer, type AnyPgColumn } from 'drizzle-orm/pg-core';
 
 export const userRole = pgEnum('user_role', ['reader', 'admin', 'super_admin']);
+export const userStatus = pgEnum('user_status', ['pending', 'active', 'rejected']);
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -9,6 +10,9 @@ export const users = pgTable('users', {
   passwordHash: text('password_hash').notNull(),
   role: userRole('role').notNull().default('reader'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
+  status: userStatus('status').notNull().default('pending'),
+  reviewedBy: integer('reviewed_by').references((): AnyPgColumn => users.id),
+  reviewedAt: timestamp('reviewed_at'),
 });
 
 export const posts = pgTable('posts', {
