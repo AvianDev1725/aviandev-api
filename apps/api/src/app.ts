@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { requireAuth, requireRole, type AuthEnv, type SessionUser } from './middleware/auth.js';
 import { createPostSchema, updatePostSchema } from './schemas/post.js';
 import {
   getPublishedPosts,
@@ -6,12 +7,19 @@ import {
   createPost,
   updatePost,
   deletePost,
+  getPostById
 } from './data/posts.js';
 import { validateJson } from './lib/validate.js';
 import { handleError } from './lib/error.js';
 import auth from './routes/auth.js';
 
-const app = new Hono();
+const app = new Hono<AuthEnv>();
+
+const canWrite = [requireAuth, requireRole('admin', 'super_admin')] as const;
+
+function canEditPost(user: SessionUser, post: { authorId: number | null }) {
+  return user.role === 'super_admin' || post.authorId === user.id;
+}
 
 app.route('/auth', auth);
 
@@ -27,28 +35,33 @@ app.get('/posts/:slug', async (c) => {
   return c.json(post);
 });
 
-app.post('/posts', validateJson(createPostSchema), async (c) => {
+app.post('/posts', ...canWrite, validateJson(createPostSchema), async (c) => {
   const body = c.req.valid('json');
-  const post = await createPost(body);
+  const post = await createPost({ ...body, authorId: c.get('user').id });
   return c.json(post, 201);
 });
 
-app.patch('/posts/:id', validateJson(updatePostSchema), async (c) => {
+app.patch('/posts/:id', ...canWrite, validateJson(updatePostSchema), async (c) => {
   const id = Number(c.req.param('id'));
   if (Number.isNaN(id)) return c.json({ error: 'Invalid id' }, 400);
 
-  const body = c.req.valid('json');
-  const post = await updatePost(id, body);
-  if (!post) return c.json({ error: 'Post not found' }, 404);
+  const existing = await getPostById(id);
+  if (!existing) return c.json({ error: 'Post not found' }, 404);
+  if (!canEditPost(c.get('user'), existing)) return c.json({ error: 'Forbidden' }, 403);
+
+  const post = await updatePost(id, c.req.valid('json'));
   return c.json(post);
 });
 
-app.delete('/posts/:id', async (c) => {
+app.delete('/posts/:id', ...canWrite, async (c) => {
   const id = Number(c.req.param('id'));
   if (Number.isNaN(id)) return c.json({ error: 'Invalid id' }, 400);
 
-  const post = await deletePost(id);
-  if (!post) return c.json({ error: 'Post not found' }, 404);
+  const existing = await getPostById(id);
+  if (!existing) return c.json({ error: 'Post not found' }, 404);
+  if (!canEditPost(c.get('user'), existing)) return c.json({ error: 'Forbidden' }, 403);
+
+  await deletePost(id);
   return c.body(null, 204);
 });
 

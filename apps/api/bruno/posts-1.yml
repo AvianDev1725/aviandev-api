@@ -1,0 +1,19 @@
+info:
+  name: posts/1
+  type: http
+  seq: 7
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/posts/3"
+  body:
+    type: json
+    data: '{"title":"Edited title"}'
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
