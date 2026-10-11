@@ -18,3 +18,9 @@ export function getPostBySlug(slug: string) {
 export function getPublishedPosts() {
   return posts.filter((post) => post.published);
 }
+
+export function createPost(input: Omit<Post, 'id'>) {
+  const newPost: Post = { id: posts.length + 1, ...input };
+  posts.push(newPost);
+  return newPost;
+}
