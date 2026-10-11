@@ -6,6 +6,14 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/invitations/accept"
+  body:
+    type: json
+    data: |-
+      {
+        "token": "aUdRdOypi53fZCUsq0RLsOx5989LDU6HQJRNIarKfiE",
+        "name": "Guest Writer",
+        "password": "Password@123"
+      }
   auth: inherit
 
 settings:

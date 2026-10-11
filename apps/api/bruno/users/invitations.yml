@@ -6,6 +6,9 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/invitations"
+  body:
+    type: json
+    data: '{"email":"guest@example.com","role":"admin"}'
   auth: inherit
 
 settings:
