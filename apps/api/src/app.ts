@@ -19,14 +19,12 @@ import invitationsRoute from './routes/invitations.js';
 import contentModelsRoute from './routes/content-models.js';
 import contentRoute from './routes/content.js';
 import fragmentsRoute from './routes/content-fragments.js';
+import { canEditPost } from './lib/permissions.js';
+import adminPostsRoute from './routes/admin-posts.js';
 
 const app = new Hono<AuthEnv>();
 
 const canWrite = [requireAuth, requireRole('admin', 'super_admin')] as const;
-
-function canEditPost(user: SessionUser, post: { authorId: number | null }) {
-  return user.role === 'super_admin' || post.authorId === user.id;
-}
 
 app.route('/auth', auth);
 
@@ -39,6 +37,8 @@ app.route('/categories', categoriesRoute);
 app.route('/content-models', contentModelsRoute);
 app.route('/content', contentRoute);
 app.route('/content-fragments', fragmentsRoute);
+
+app.route('/admin/posts', adminPostsRoute);
 
 app.get('/', (c) => c.text('Hello Hono!'));
 

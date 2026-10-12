@@ -1,12 +1,12 @@
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db } from '../db/index.js';
-import { categories, postCategories, posts } from '../db/schema.js';
+import { categories, postCategories, posts, users } from '../db/schema.js';
 
 export type NewPost = typeof posts.$inferInsert;
 export type PostInput = NewPost & { categoryIds?: number[] };
 type Post = typeof posts.$inferSelect;
 
-async function attachCategories(rows: Post[]) {
+async function attachCategories<T extends { id: number }>(rows: T[]) {
   if (rows.length === 0) return [];
 
   const links = await db
@@ -101,5 +101,32 @@ export async function updatePost(id: number, { categoryIds, ...input }: Partial<
 
 export async function deletePost(id: number) {
   const [post] = await db.delete(posts).where(eq(posts.id, id)).returning();
+  return post;
+}
+
+export async function listPostsForEditor(user: { id: number; role: string }) {
+  const rows = await db
+    .select({
+      id: posts.id,
+      title: posts.title,
+      slug: posts.slug,
+      excerpt: posts.excerpt,
+      published: posts.published,
+      publishedAt: posts.publishedAt,
+      updatedAt: posts.updatedAt,
+      authorId: posts.authorId,
+      authorName: users.name,
+    })
+    .from(posts)
+    .leftJoin(users, eq(posts.authorId, users.id))
+    .where(user.role === 'super_admin' ? undefined : eq(posts.authorId, user.id))
+    .orderBy(desc(posts.updatedAt));
+
+  return attachCategories(rows);
+}
+
+export async function getPostWithCategories(id: number) {
+  const rows = await db.select().from(posts).where(eq(posts.id, id));
+  const [post] = await attachCategories(rows);
   return post;
 }

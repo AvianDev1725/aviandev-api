@@ -10,10 +10,8 @@ http:
     type: json
     data: |-
       {
-        "title": "Hello categories",
-        "slug": "hello-categories",
-        "published": true,
-        "categoryIds": [1,2]
+        "title": "My first draft",
+        "slug": "my-first-draft"
       }
   auth: inherit
 
