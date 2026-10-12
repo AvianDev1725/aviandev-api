@@ -2,11 +2,12 @@ import { Hono } from 'hono';
 import { asc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db/index.js';
-import { contentModels } from '../db/schema.js';
+import { contentFragments, contentModels } from '../db/schema.js';
 import { canWrite, requireAuth, requireRole, type AuthEnv } from '../middleware/auth.js';
 import { validateJson } from '../lib/validate.js';
 import { slugField } from '../schemas/post.js';
 import { fieldTypes, modelFieldsSchema } from '../content/field-types.js';
+import { notifyContentChanged } from '../lib/revalidate.js';
 
 const modelBase = {
   name: z.string({ error: 'Name is required' }).trim().min(1, 'Name is required').max(60),
@@ -65,6 +66,11 @@ contentModelsRoute.patch('/:id', ...superAdminOnly, validateJson(updateModelSche
     .where(eq(contentModels.id, id))
     .returning();
   if (!model) return c.json({ error: 'Model not found' }, 404);
+  const affected = await db
+    .select({ key: contentFragments.key })
+    .from(contentFragments)
+    .where(eq(contentFragments.modelId, id));
+  notifyContentChanged(affected.map((row) => row.key));
   return c.json(model);
 });
 

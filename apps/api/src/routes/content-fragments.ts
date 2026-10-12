@@ -7,6 +7,7 @@ import { canWrite, requireAuth, requireRole, type AuthEnv } from '../middleware/
 import { formatIssues, validateJson } from '../lib/validate.js';
 import { slugField } from '../schemas/post.js';
 import { dataSchemaFor, shapeData } from '../content/field-types.js';
+import { notifyContentChanged } from '../lib/revalidate.js';
 
 const saveFragmentSchema = z.object({
   model: slugField,
@@ -66,7 +67,7 @@ fragmentsRoute.put('/:key', ...canWrite, validateJson(saveFragmentSchema), async
   } else {
     await db.insert(contentFragments).values(values);
   }
-
+  notifyContentChanged([key]);
   return c.json({ key, model: model.key, data: parsed.data }, existing ? 200 : 201);
 });
 
@@ -77,6 +78,7 @@ fragmentsRoute.delete('/:key', requireAuth, requireRole('super_admin'), async (c
     .returning({ key: contentFragments.key });
 
   if (!deleted) return c.json({ error: 'Content not found' }, 404);
+  notifyContentChanged([deleted.key]);
   return c.body(null, 204);
 });
 
