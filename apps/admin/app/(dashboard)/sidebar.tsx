@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, LogOut, PanelLeftClose, PanelLeftOpen, Users, Blocks, type LucideIcon } from 'lucide-react';
+import { LayoutDashboard, LogOut, PanelLeftClose, PanelLeftOpen, Users, Blocks, FileText, type LucideIcon } from 'lucide-react';
 
 type Role = 'reader' | 'admin' | 'super_admin';
 
@@ -23,6 +23,7 @@ export type SidebarLabels = {
   expand: string;
   navigation: string;
   models: string;
+  content: string;
 };
 
 type SidebarProps = {
@@ -38,6 +39,7 @@ export default function Sidebar({ user, labels, initialCollapsed }: SidebarProps
 
   const items: NavItem[] = [
     { href: '/', label: labels.dashboard, icon: LayoutDashboard },
+    { href: '/content', label: labels.content, icon: FileText },
     { href: '/models', label: labels.models, icon: Blocks, roles: ['super_admin'] },
     { href: '/team', label: labels.team, icon: Users, roles: ['super_admin'] },
   ];
@@ -61,14 +63,12 @@ export default function Sidebar({ user, labels, initialCollapsed }: SidebarProps
 
   return (
     <aside
-      className={`sticky top-0 flex h-screen shrink-0 flex-col border-r border-zinc-200 bg-white transition-[width] duration-200 motion-reduce:transition-none ${
-        collapsed ? 'w-16' : 'w-60'
-      }`}
+      className={`sticky top-0 flex h-screen shrink-0 flex-col border-r border-zinc-200 bg-white transition-[width] duration-200 motion-reduce:transition-none ${collapsed ? 'w-16' : 'w-60'
+        }`}
     >
       <div
-        className={`flex h-14 items-center gap-2 border-b border-zinc-200 px-3 ${
-          collapsed ? 'justify-center' : 'justify-between'
-        }`}
+        className={`flex h-14 items-center gap-2 border-b border-zinc-200 px-3 ${collapsed ? 'justify-center' : 'justify-between'
+          }`}
       >
         {!collapsed && <span className="truncate font-semibold text-zinc-900">{labels.appName}</span>}
         <button
@@ -90,9 +90,8 @@ export default function Sidebar({ user, labels, initialCollapsed }: SidebarProps
               href={href}
               aria-current={active ? 'page' : undefined}
               title={collapsed ? label : undefined}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium ${
-                active ? 'bg-zinc-900 text-white' : 'text-zinc-700 hover:bg-zinc-100'
-              }`}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium ${active ? 'bg-zinc-900 text-white' : 'text-zinc-700 hover:bg-zinc-100'
+                }`}
             >
               <Icon size={18} aria-hidden className="shrink-0" />
               <span className={collapsed ? 'sr-only' : 'truncate'}>{label}</span>
