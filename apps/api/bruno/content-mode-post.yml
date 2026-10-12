@@ -1,0 +1,58 @@
+info:
+  name: content-mode-post
+  type: http
+  seq: 13
+
+http:
+  method: POST
+  url: "{{baseUrl}}/content-models"
+  body:
+    type: json
+    data: |-
+      {
+        "key": "banner",
+        "name": "Banner",
+        "description": "A large heading with optional text, image and button",
+        "fields": [
+          {
+            "key": "title",
+            "label": "Title",
+            "type": "text",
+            "required": true
+          },
+          {
+            "key": "subtitle",
+            "label": "Subtitle",
+            "type": "longText"
+          },
+          {
+            "key": "image",
+            "label": "Image",
+            "type": "image"
+          },
+          {
+            "key": "imageAlt",
+            "label": "Image description",
+            "type": "text",
+            "help": "Describes the image for screen readers"
+          },
+          {
+            "key": "ctaLabel",
+            "label": "Button label",
+            "type": "text"
+          },
+          {
+            "key": "ctaUrl",
+            "label": "Button link",
+            "type": "link"
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

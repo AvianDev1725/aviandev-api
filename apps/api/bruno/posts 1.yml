@@ -8,7 +8,13 @@ http:
   url: "{{baseUrl}}/posts"
   body:
     type: json
-    data: '{"title":"My first post","slug":"my-first-post","published":true}'
+    data: |-
+      {
+        "title": "Hello categories",
+        "slug": "hello-categories",
+        "published": true,
+        "categoryIds": [1,2]
+      }
   auth: inherit
 
 settings:

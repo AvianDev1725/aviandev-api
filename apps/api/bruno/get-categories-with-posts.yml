@@ -5,10 +5,10 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/posts?category=nextjs"
+  url: "{{baseUrl}}/posts?category=xyz"
   params:
     - name: category
-      value: nextjs
+      value: xyz
       type: query
   auth: inherit
 

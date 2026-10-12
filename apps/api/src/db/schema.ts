@@ -11,6 +11,7 @@ import {
   type AnyPgColumn,
   primaryKey,
 } from 'drizzle-orm/pg-core';
+import type { FieldDefinition } from '../content/field-types.js';
 
 export const userRole = pgEnum('user_role', ['reader', 'admin', 'super_admin']);
 export const userStatus = pgEnum('user_status', ['pending', 'active', 'rejected']);
@@ -90,3 +91,16 @@ export const postCategories = pgTable(
   },
   (table) => [primaryKey({ columns: [table.postId, table.categoryId] })]
 );
+
+export const contentModels = pgTable('content_models', {
+  id: serial('id').primaryKey(),
+  key: text('key').notNull().unique(),
+  name: text('name').notNull(),
+  description: text('description').notNull().default(''),
+  fields: jsonb('fields').$type<FieldDefinition[]>().notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at')
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});

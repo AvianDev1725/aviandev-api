@@ -50,6 +50,13 @@
       "when": 1791779774164,
       "tag": "0006_crazy_scalphunter",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791781330459,
+      "tag": "0007_careful_karma",
+      "breakpoints": true
     }
   ]
 }
