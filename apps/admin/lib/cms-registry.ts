@@ -6,6 +6,7 @@ import { teamText } from '../app/(dashboard)/team/text';
 import { modelsText } from '../app/(dashboard)/models/text';
 import { contentText, richTextText } from '../app/(dashboard)/content/text';
 import { emailKeys, emailText } from '../../api/src/content/email-text';
+import { categoriesText } from '../app/(dashboard)/categories/text';
 
 export type CmsEntry = {
   key: string;
@@ -45,7 +46,7 @@ export const cmsRegistry: CmsEntry[] = [
     description: 'The first page after signing in. {name} is replaced with the person’s name.',
     fallback: dashboardText,
   },
-    {
+  {
     key: 'admin-team',
     name: 'Admin: team page',
     description: 'Invites, access requests and members. Placeholders: {email}, {count}, {date}, {name}.',
@@ -92,5 +93,11 @@ export const cmsRegistry: CmsEntry[] = [
     name: 'Email: invitation',
     description: 'Placeholders: {role}, {url}. Role wording comes from the two role fields.',
     fallback: emailText.invite,
+  },
+  {
+    key: 'admin-categories',
+    name: 'Admin: categories page',
+    description: 'Adding, editing and deleting categories. Placeholders: {count}, {name}.',
+    fallback: categoriesText,
   },
 ];

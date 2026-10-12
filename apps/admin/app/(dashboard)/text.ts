@@ -11,6 +11,7 @@ export const shellText = {
   roleReader: 'Reader',
   roleAdmin: 'Admin',
   roleSuperAdmin: 'Super admin',
+  categories: 'Categories',
 };
 
 export const dashboardText = {

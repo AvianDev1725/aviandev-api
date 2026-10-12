@@ -1,0 +1,25 @@
+export const categoriesText = {
+  title: 'Categories',
+  subtitle: 'Group your posts by topic. A post can belong to several categories.',
+  addTitle: 'Add a category',
+  nameLabel: 'Name',
+  slugLabel: 'Slug',
+  slugHelp: 'Used in the address, e.g. /category/nextjs. Lowercase letters, numbers and hyphens.',
+  descriptionLabel: 'Description',
+  add: 'Add category',
+  adding: 'Adding…',
+  listHeading: 'All categories ({count})',
+  empty: 'No categories yet.',
+  edit: 'Edit',
+  editLabel: 'Edit {name}',
+  save: 'Save',
+  saving: 'Saving…',
+  cancel: 'Cancel',
+  delete: 'Delete',
+  deleteLabel: 'Delete {name}',
+  deleteConfirm: 'Delete the category "{name}"? Posts in it will stay, but lose this category.',
+  missingName: 'Enter a name',
+  errorFallback: 'Something went wrong. Check your connection and try again.',
+};
+
+export type CategoriesText = typeof categoriesText;
