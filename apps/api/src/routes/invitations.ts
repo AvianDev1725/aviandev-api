@@ -54,7 +54,7 @@ invitationsRoute.post(
     });
 
     const inviteUrl = `${ADMIN_URL}/accept-invite?token=${token}`;
-    const emailSent = await sendEmail({ to: email, ...emails.invite(inviteUrl, role) });
+    const emailSent = await sendEmail({ to: email, ...(await emails.invite(inviteUrl, role)) });
     return c.json({ email, role, expiresAt, inviteUrl, emailSent }, 201);
   }
 );

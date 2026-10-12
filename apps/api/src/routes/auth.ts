@@ -28,7 +28,7 @@ async function notifySuperAdmins(name: string, email: string) {
       .where(and(eq(users.role, 'super_admin'), eq(users.status, 'active')));
 
     if (superAdmins.length > 0) {
-      await sendEmail({ to: superAdmins.map((u) => u.email), ...emails.newSignup(name, email) });
+        await sendEmail({ to: superAdmins.map((u) => u.email), ...(await emails.newSignup(name, email)) });
     }
   } catch (err) {
     console.error('[notify super admins failed]', err);

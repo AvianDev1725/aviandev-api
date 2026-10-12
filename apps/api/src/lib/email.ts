@@ -1,4 +1,6 @@
 import { Resend } from 'resend';
+import { emailKeys, emailText } from '../content/email-text.js';
+import { getText } from './content.js';
 
 type Email = { to: string | string[]; subject: string; text: string };
 
@@ -26,27 +28,29 @@ export async function sendEmail(email: Email) {
 
 const adminUrl = () => process.env.ADMIN_URL ?? 'http://localhost:3001';
 
+function fill(template: string, values: Record<string, string>) {
+  return template.replace(/\{(\w+)\}/g, (match, key: string) => (Object.hasOwn(values, key) ? values[key] : match));
+}
+
 export const emails = {
-  newSignup: (name: string, email: string) => ({
-    subject: 'New admin access request',
-    text: `${name} (${email}) has requested admin access to AvianDev.\n\nReview it here: ${adminUrl()}/team`,
-  }),
+  async newSignup(name: string, email: string) {
+    const t = await getText(emailKeys.newSignup, emailText.newSignup);
+    return { subject: fill(t.subject, { name }), text: fill(t.body, { name, email, url: `${adminUrl()}/team` }) };
+  },
 
-  approved: (name: string) => ({
-    subject: 'Your AvianDev access was approved',
-    text: `Hi ${name},\n\nYour request for admin access was approved. You can sign in here: ${adminUrl()}/login`,
-  }),
+  async approved(name: string) {
+    const t = await getText(emailKeys.approved, emailText.approved);
+    return { subject: fill(t.subject, { name }), text: fill(t.body, { name, url: `${adminUrl()}/login` }) };
+  },
 
-  rejected: (name: string) => ({
-    subject: 'About your AvianDev access request',
-    text: `Hi ${name},\n\nYour request for admin access to AvianDev wasn't approved.`,
-  }),
+  async rejected(name: string) {
+    const t = await getText(emailKeys.rejected, emailText.rejected);
+    return { subject: fill(t.subject, { name }), text: fill(t.body, { name }) };
+  },
 
-  invite: (inviteUrl: string, role: 'admin' | 'super_admin') => ({
-    subject: "You're invited to AvianDev Admin",
-    text:
-      `You've been invited to join AvianDev Admin as ${role === 'super_admin' ? 'a super admin' : 'an admin'}.\n\n` +
-      `Accept your invite: ${inviteUrl}\n\n` +
-      `This link expires in 48 hours. If you weren't expecting this, you can ignore this email.`,
-  }),
+  async invite(inviteUrl: string, role: 'admin' | 'super_admin') {
+    const t = await getText(emailKeys.invite, emailText.invite);
+    const roleText = role === 'super_admin' ? t.roleSuperAdmin : t.roleAdmin;
+    return { subject: t.subject, text: fill(t.body, { role: roleText, url: inviteUrl }) };
+  },
 };

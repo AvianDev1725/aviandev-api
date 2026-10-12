@@ -2,12 +2,18 @@ import Link from 'next/link';
 import { apiGet, getCurrentUser } from '@/lib/api';
 import type { ContentModel } from '@/lib/content-types';
 import FragmentForm from '../fragment-form';
-import { contentText as text } from '../text';
+import { getManyByCMS } from '@/lib/content';
+import { contentText, richTextText } from '../text';
 
 export const instant = false;
 
 export default async function NewContentPage() {
-  const [user, models] = await Promise.all([getCurrentUser(), apiGet<ContentModel[]>('/content-models')]);
+  const [user, models, cms] = await Promise.all([
+    getCurrentUser(),
+    apiGet<ContentModel[]>('/content-models'),
+    getManyByCMS({ 'admin-content': contentText, 'admin-rich-text': richTextText }),
+  ]);
+  const text = cms['admin-content'];
 
   if (!models || models.length === 0) {
     return (
@@ -22,5 +28,5 @@ export default async function NewContentPage() {
     );
   }
 
-  return <FragmentForm text={text} models={models} canDelete={false} />;
+  return <FragmentForm text={text} richText={cms['admin-rich-text']} models={models} canDelete={false} />;
 }

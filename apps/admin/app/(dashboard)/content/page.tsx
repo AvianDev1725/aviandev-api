@@ -2,13 +2,15 @@ import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { apiGet } from '@/lib/api';
 import { fill } from '@/lib/text';
-import { contentText as text } from './text';
+import { getContentByCMS } from '@/lib/content';
+import { contentText } from './text';
 
 export const instant = false;
 
 type FragmentRow = { key: string; model: string; modelName: string; updatedAt: string };
 
 export default async function ContentPage() {
+  const text = await getContentByCMS('admin-content', contentText);
   const fragments = (await apiGet<FragmentRow[]>('/content-fragments')) ?? [];
 
   return (

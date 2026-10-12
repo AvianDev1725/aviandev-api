@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Field, FormError } from '@/components/form';
 import RichTextEditor from '@/components/rich-text-editor';
+import type { RichTextLabels } from '@/components/rich-text-editor';
 import { deleteJson, putJson } from '@/lib/client';
 import { fill } from '@/lib/text';
 import type { ContentModel, FieldDefinition } from '@/lib/content-types';
@@ -43,9 +44,10 @@ type Props = {
   models: ContentModel[];
   fragment?: Fragment;
   canDelete: boolean;
+  richText: RichTextLabels;
 };
 
-export default function FragmentForm({ text, models, fragment, canDelete }: Props) {
+export default function FragmentForm({ text, models, fragment, canDelete, richText }: Props) {
   const router = useRouter();
   const isNew = !fragment;
 
@@ -87,7 +89,7 @@ export default function FragmentForm({ text, models, fragment, canDelete }: Prop
         result.details.filter((d) => d.field.startsWith('data.')).map((d) => [d.field.slice(5), d.message])
       );
       setFieldErrors(errors);
-      return setError(Object.keys(errors).length > 0 ? text.fixErrors : result.error);
+      return setError(Object.keys(errors).length > 0 ? text.fixErrors : result.error || text.errorFallback);
     }
 
     if (isNew) {
@@ -101,7 +103,7 @@ export default function FragmentForm({ text, models, fragment, canDelete }: Prop
   async function remove() {
     if (!fragment || !confirm(text.deleteConfirm)) return;
     const result = await deleteJson(`/content-fragments/${fragment.key}`);
-    if (!result.ok) return setError(result.error);
+    if (!result.ok) return setError(result.error || text.errorFallback);
     router.push('/content');
     router.refresh();
   }
@@ -161,6 +163,7 @@ export default function FragmentForm({ text, models, fragment, canDelete }: Prop
                 value={values[field.key]}
                 error={fieldErrors[field.key]}
                 text={text}
+                richText={richText}
                 onChange={(value) => setValues((current) => ({ ...current, [field.key]: value }))}
               />
             ))
@@ -203,9 +206,10 @@ type FieldInputProps = {
   error?: string;
   text: ContentText;
   onChange: (value: unknown) => void;
+  richText: RichTextLabels;
 };
 
-function FieldInput({ field, value, error, text, onChange }: FieldInputProps) {
+function FieldInput({ field, value, error, text, onChange, richText }: FieldInputProps) {
   const id = `value-${field.key}`;
   const labelId = `${id}-label`;
   const helpId = field.help ? `${id}-help` : undefined;
@@ -285,7 +289,7 @@ function FieldInput({ field, value, error, text, onChange }: FieldInputProps) {
           describedBy={describedBy}
           value={stringValue}
           onChange={onChange}
-          labels={text.richText}
+          labels={richText}
         />
       )}
       {field.type === 'number' && (

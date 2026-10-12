@@ -3,23 +3,23 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteJson } from '@/lib/client';
+import { fill } from '@/lib/text';
+import type { TeamText } from './text';
 
-export default function DeleteMemberButton({ id, name }: { id: number; name: string }) {
+export default function DeleteMemberButton({ id, name, text }: { id: number; name: string; text: TeamText }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
   async function remove() {
-    if (!confirm(`Delete ${name}'s account? They'll be logged out, and all of their posts will be permanently deleted.`)) {
-      return;
-    }
+    if (!confirm(fill(text.deleteConfirm, { name }))) return;
 
     setBusy(true);
     setError('');
     const result = await deleteJson(`/users/${id}`);
     setBusy(false);
 
-    if (!result.ok) return setError(result.error);
+    if (!result.ok) return setError(result.error || text.errorFallback);
     router.refresh();
   }
 
@@ -33,10 +33,10 @@ export default function DeleteMemberButton({ id, name }: { id: number; name: str
       <button
         onClick={remove}
         disabled={busy}
-        aria-label={`Delete ${name}`}
+        aria-label={fill(text.deleteLabel, { name })}
         className="rounded-lg px-3 py-1.5 text-sm text-red-700 ring-1 ring-red-200 hover:bg-red-50 disabled:opacity-60"
       >
-        {busy ? 'Deleting…' : 'Delete'}
+        {busy ? text.deleting : text.delete}
       </button>
     </div>
   );

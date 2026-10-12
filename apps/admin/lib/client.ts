@@ -14,13 +14,13 @@ async function callApi<T>(method: string, path: string, body?: unknown): Promise
     if (!res.ok) {
       return {
         ok: false,
-        error: data.details?.[0]?.message ?? data.error ?? 'Something went wrong. Please try again.',
+        error: data.details?.[0]?.message ?? data.error ?? '',
         details: data.details ?? [],
       };
     }
     return { ok: true, data };
   } catch {
-    return { ok: false, error: 'Could not reach the server. Is the API running?', details: [] };
+    return { ok: false, error: '', details: [] };
   }
 }
 

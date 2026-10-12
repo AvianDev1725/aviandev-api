@@ -25,21 +25,22 @@ export const contentText = {
   delete: 'Delete',
   deleteConfirm: 'Delete this content? Pages using it will fall back to their default text.',
   errorFallback: 'Something went wrong. Check your connection and try again.',
-  richText: {
-    toolbar: 'Formatting',
-    bold: 'Bold',
-    italic: 'Italic',
-    underline: 'Underline',
-    heading2: 'Heading',
-    heading3: 'Subheading',
-    bulletList: 'Bulleted list',
-    numberedList: 'Numbered list',
-    quote: 'Quote',
-    codeBlock: 'Code block',
-    link: 'Add or edit link',
-    unlink: 'Remove link',
-    linkPrompt: 'Link address (https://… or /page). Leave empty to remove the link.',
-  },
+};
+
+export const richTextText = {
+  toolbar: 'Formatting',
+  bold: 'Bold',
+  italic: 'Italic',
+  underline: 'Underline',
+  heading2: 'Heading',
+  heading3: 'Subheading',
+  bulletList: 'Bulleted list',
+  numberedList: 'Numbered list',
+  quote: 'Quote',
+  codeBlock: 'Code block',
+  link: 'Add or edit link',
+  unlink: 'Remove link',
+  linkPrompt: 'Link address (https://… or /page). Leave empty to remove the link.',
 };
 
 export type ContentText = typeof contentText;

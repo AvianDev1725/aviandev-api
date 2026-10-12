@@ -4,11 +4,13 @@ import { Plus } from 'lucide-react';
 import { apiGet, getCurrentUser } from '@/lib/api';
 import { fill } from '@/lib/text';
 import type { ContentModel } from '@/lib/content-types';
-import { modelsText as text } from './text';
+import { getContentByCMS } from '@/lib/content';
+import { modelsText } from './text';
 
 export const instant = false;
 
 export default async function ModelsPage() {
+  const text = await getContentByCMS('admin-models', modelsText);
   const user = await getCurrentUser();
   if (!user || user.role !== 'super_admin') redirect('/');
 
