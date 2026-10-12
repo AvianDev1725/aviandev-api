@@ -3,6 +3,7 @@ import { and, asc, eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { users } from '../db/schema.js';
 import { requireAuth, requireRole, type AuthEnv } from '../middleware/auth.js';
+import { sendEmail, emails } from '../lib/email.js';
 
 const usersRoute = new Hono<AuthEnv>();
 
@@ -32,6 +33,7 @@ usersRoute.post('/:id/approve', async (c) => {
 
   const user = await reviewRequest(id, c.get('user').id, 'active');
   if (!user) return c.json({ error: 'No pending request with this id' }, 404);
+  await sendEmail({ to: user.email, ...emails.approved(user.name) });
   return c.json(user);
 });
 
@@ -41,6 +43,7 @@ usersRoute.post('/:id/reject', async (c) => {
 
   const user = await reviewRequest(id, c.get('user').id, 'rejected');
   if (!user) return c.json({ error: 'No pending request with this id' }, 404);
+  await sendEmail({ to: user.email, ...emails.rejected(user.name) });
   return c.json(user);
 });
 

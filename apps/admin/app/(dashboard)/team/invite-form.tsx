@@ -5,7 +5,7 @@ import { Field, FormError } from '@/components/form';
 import { postJson } from '@/lib/client';
 
 type Role = 'admin' | 'super_admin';
-type Invite = { email: string; role: Role; inviteUrl: string };
+type Invite = { email: string; role: Role; inviteUrl: string; emailSent: boolean };
 
 export default function InviteForm() {
   const [email, setEmail] = useState('');
@@ -68,28 +68,19 @@ export default function InviteForm() {
 
       <FormError message={error} />
 
-      {invite && (
-        <div role="status" className="space-y-2 rounded-lg bg-zinc-50 p-4 text-sm">
-          <p className="text-zinc-700">
-            Invite created for <span className="font-medium">{invite.email}</span>. Share this link (valid for 48 hours):
-          </p>
-          <div className="flex gap-2">
-            <input
-              readOnly
-              value={invite.inviteUrl}
-              aria-label="Invite link"
-              className="min-w-0 flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-700"
-            />
-            <button
-              type="button"
-              onClick={copyLink}
-              className="rounded-lg px-3 py-2 ring-1 ring-zinc-300 hover:bg-zinc-100"
-            >
-              {copied ? 'Copied' : 'Copy'}
-            </button>
-          </div>
-        </div>
-      )}
+      <p className="text-zinc-700">
+        {invite?.emailSent ? (
+          <>
+            Invite emailed to <span className="font-medium">{invite.email}</span>. You can also share this link (valid
+            for 48 hours):
+          </>
+        ) : (
+          <>
+            Invite created, but the email couldn't be sent. Share this link with{' '}
+            <span className="font-medium">{invite?.email}</span> yourself (valid for 48 hours):
+          </>
+        )}
+      </p>
     </div>
   );
 }

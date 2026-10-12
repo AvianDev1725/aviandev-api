@@ -9,6 +9,7 @@ import { validateJson } from '../lib/validate.js';
 import { hashPassword } from '../lib/password.js';
 import { generateToken, hashToken } from '../lib/token.js';
 import { nameField, emailField, passwordField } from '../schemas/user.js';
+import { sendEmail, emails } from '../lib/email.js';
 
 const INVITE_HOURS = 48;
 const ADMIN_URL = process.env.ADMIN_URL ?? 'http://localhost:3001';
@@ -53,8 +54,8 @@ invitationsRoute.post(
     });
 
     const inviteUrl = `${ADMIN_URL}/accept-invite?token=${token}`;
-    console.log(`Invite for ${email}: ${inviteUrl}`);
-    return c.json({ email, role, expiresAt, inviteUrl }, 201);
+    const emailSent = await sendEmail({ to: email, ...emails.invite(inviteUrl, role) });
+    return c.json({ email, role, expiresAt, inviteUrl, emailSent }, 201);
   }
 );
 

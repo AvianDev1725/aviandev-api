@@ -1,10 +1,11 @@
 import { Hono } from 'hono';
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { rateLimit } from '../middleware/rate-limit.js';
 import { db } from '../db/index.js';
 import { users } from '../db/schema.js';
+import { sendEmail, emails } from '../lib/email.js';
 import { hashPassword, verifyPassword } from '../lib/password.js';
 import { createSession, getSessionUser, deleteSession, SESSION_COOKIE } from '../lib/session.js';
 import { validateJson } from '../lib/validate.js';
@@ -18,6 +19,21 @@ const loginSchema = z.object({
 const signupSchema = z.object({ name: nameField, email: emailField, password: passwordField });
 
 const dummyHash = await hashPassword('dummy-password-for-timing');
+
+async function notifySuperAdmins(name: string, email: string) {
+  try {
+    const superAdmins = await db
+      .select({ email: users.email })
+      .from(users)
+      .where(and(eq(users.role, 'super_admin'), eq(users.status, 'active')));
+
+    if (superAdmins.length > 0) {
+      await sendEmail({ to: superAdmins.map((u) => u.email), ...emails.newSignup(name, email) });
+    }
+  } catch (err) {
+    console.error('[notify super admins failed]', err);
+  }
+}
 
 const auth = new Hono();
 
@@ -53,6 +69,7 @@ auth.post(
     const [existing] = await db.select({ id: users.id }).from(users).where(eq(users.email, email));
     if (!existing) {
       await db.insert(users).values({ name, email, passwordHash, role: 'admin', status: 'pending' });
+      void notifySuperAdmins(name, email);
     }
 
     return c.json({ message: "Request received. You'll be able to sign in once it's approved." }, 202);
