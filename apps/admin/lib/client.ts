@@ -20,3 +20,4 @@ async function callApi<T>(method: string, path: string, body?: unknown): Promise
 
 export const postJson = <T = unknown>(path: string, body: unknown) => callApi<T>('POST', path, body);
 export const deleteJson = <T = unknown>(path: string) => callApi<T>('DELETE', path);
+export const patchJson = <T = unknown>(path: string, body: unknown) => callApi<T>('PATCH', path, body);

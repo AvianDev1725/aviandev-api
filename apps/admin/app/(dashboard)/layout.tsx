@@ -13,6 +13,7 @@ const labels: SidebarLabels = {
   collapse: 'Collapse sidebar',
   expand: 'Expand sidebar',
   navigation: 'Main navigation',
+  models: 'Content models',
 };
 
 const roleLabels = { reader: 'Reader', admin: 'Admin', super_admin: 'Super admin' } as const;

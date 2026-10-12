@@ -22,9 +22,10 @@ type FieldProps = {
   type?: string;
   autoComplete?: string;
   hint?: string;
+  disabled?: boolean;
 };
 
-export function Field({ id, label, value, onChange, type = 'text', autoComplete, hint }: FieldProps) {
+export function Field({ id, label, value, onChange, type = 'text', autoComplete, hint, disabled }: FieldProps) {
   return (
     <div className="space-y-1">
       <label htmlFor={id} className="text-sm font-medium text-zinc-700">
@@ -37,7 +38,8 @@ export function Field({ id, label, value, onChange, type = 'text', autoComplete,
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-describedby={hint ? `${id}-hint` : undefined}
-        className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900"
+        disabled={disabled}
+        className="disabled:bg-zinc-100 disabled:text-zinc-500 w-full rounded-lg border border-zinc-300 px-3 py-2 text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900"
       />
       {hint && (
         <p id={`${id}-hint`} className="text-xs text-zinc-500">
