@@ -1,35 +1,25 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/api';
-import Sidebar, { type SidebarLabels } from './sidebar';
+import { getContentByCMS } from '@/lib/content';
+import Sidebar from './sidebar';
+import { shellText } from './text';
 
 export const instant = false;
-
-const labels: SidebarLabels = {
-  appName: 'AvianDev Admin',
-  dashboard: 'Dashboard',
-  team: 'Team',
-  logout: 'Log out',
-  collapse: 'Collapse sidebar',
-  expand: 'Expand sidebar',
-  navigation: 'Main navigation',
-  models: 'Content models',
-  content: 'Content',
-};
-
-const roleLabels = { reader: 'Reader', admin: 'Admin', super_admin: 'Super admin' } as const;
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
   if (!user) redirect('/login');
 
-  const collapsed = (await cookies()).get('sidebar')?.value === 'collapsed';
+  const [text, cookieStore] = await Promise.all([getContentByCMS('admin-shell', shellText), cookies()]);
+  const collapsed = cookieStore.get('sidebar')?.value === 'collapsed';
+  const roleLabels = { reader: text.roleReader, admin: text.roleAdmin, super_admin: text.roleSuperAdmin };
 
   return (
     <div className="flex min-h-screen bg-zinc-50">
       <Sidebar
         user={{ name: user.name, role: user.role, roleLabel: roleLabels[user.role] }}
-        labels={labels}
+        labels={text}
         initialCollapsed={collapsed}
       />
       <main className="min-w-0 flex-1 p-6">{children}</main>

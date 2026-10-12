@@ -23,7 +23,7 @@ export default function LoginForm({ text }: { text: LoginText }) {
     const result = await postJson('/auth/login', { email, password });
     setLoading(false);
 
-    if (!result.ok) return setError(result.error);
+    if (!result.ok) return setError(result?.error || text?.errorFallback);
     router.push('/');
     router.refresh();
   }

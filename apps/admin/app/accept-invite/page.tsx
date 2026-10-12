@@ -1,10 +1,14 @@
 import { Suspense } from 'react';
+import { getContentByCMS } from '@/lib/content';
 import AcceptInviteForm from './accept-invite-form';
+import { acceptInviteText } from './text';
 
-export default function AcceptInvitePage() {
+export default async function AcceptInvitePage() {
+  const text = await getContentByCMS('admin-accept-invite', acceptInviteText);
+
   return (
     <Suspense fallback={null}>
-      <AcceptInviteForm />
+      <AcceptInviteForm text={text} />
     </Suspense>
   );
 }
