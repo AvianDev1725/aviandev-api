@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -93,6 +94,12 @@ export default function LoginPage() {
         >
           {loading ? 'Signing in…' : 'Sign in'}
         </button>
+        <p className="text-center text-sm text-zinc-500">
+          Need access?{' '}
+          <Link href="/signup" className="font-medium text-zinc-900 underline">
+            Request it
+          </Link>
+        </p>
       </form>
     </main>
   );
