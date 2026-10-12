@@ -10,16 +10,19 @@ export type User = {
   role: 'reader' | 'admin' | 'super_admin';
 };
 
-export const getCurrentUser = cache(async (): Promise<User | null> => {
+export async function apiGet<T>(path: string): Promise<T | null> {
   const session = (await cookies()).get('session');
   if (!session) return null;
 
-  const res = await fetch(`${API_URL}/auth/me`, {
+  const res = await fetch(`${API_URL}${path}`, {
     headers: { Cookie: `session=${session.value}` },
     cache: 'no-store',
   });
   if (!res.ok) return null;
+  return res.json();
+}
 
-  const { user } = await res.json();
-  return user;
+export const getCurrentUser = cache(async () => {
+  const data = await apiGet<{ user: User }>('/auth/me');
+  return data?.user ?? null;
 });
