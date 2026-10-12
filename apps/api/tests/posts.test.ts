@@ -1,3 +1,4 @@
+import { eq } from 'drizzle-orm';
 import { describe, it, expect, beforeEach } from 'vitest';
 import app from '../src/app.js';
 import { db } from '../src/db/index.js';
@@ -121,5 +122,46 @@ describe('validation', () => {
   it('returns 409 for a duplicate slug', async () => {
     await create({ title: 'First', slug: 'same' });
     expect((await create({ title: 'Second', slug: 'same' })).status).toBe(409);
+  });
+});
+
+describe('content and dates', () => {
+  it('stores content and an excerpt', async () => {
+    const content = { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] }] };
+    const post = await (await create({ title: 'Rich', slug: 'rich', excerpt: 'A short summary', content })).json();
+
+    expect(post.excerpt).toBe('A short summary');
+    expect(post.content).toEqual(content);
+  });
+
+  it('gives new posts an empty document by default', async () => {
+    const post = await (await create({ title: 'Empty', slug: 'empty' })).json();
+    expect(post.content).toEqual({ type: 'doc', content: [] });
+  });
+
+  it('rejects content that is not a document', async () => {
+    const res = await create({ title: 'Bad', slug: 'bad', content: { type: 'html' } });
+    expect(res.status).toBe(400);
+  });
+
+  it('sets publishedAt on first publish and keeps it after republishing', async () => {
+    const draft = await (await create({ title: 'Later', slug: 'later' })).json();
+    expect(draft.publishedAt).toBeNull();
+
+    const first = await (await send('PATCH', `/posts/${draft.id}`, admin, { published: true })).json();
+    expect(first.publishedAt).not.toBeNull();
+
+    await send('PATCH', `/posts/${draft.id}`, admin, { published: false });
+    const again = await (await send('PATCH', `/posts/${draft.id}`, admin, { published: true })).json();
+    expect(again.publishedAt).toBe(first.publishedAt);
+  });
+
+  it('updates updatedAt on every change', async () => {
+    const created = await (await create({ title: 'Old', slug: 'old' })).json();
+    await send('PATCH', `/posts/${created.id}`, admin, { title: 'New' });
+
+    const [row] = await db.select().from(posts).where(eq(posts.id, created.id));
+    expect(row.title).toBe('New');
+    expect(row.updatedAt.getTime()).toBeGreaterThan(new Date(created.updatedAt).getTime());
   });
 });
