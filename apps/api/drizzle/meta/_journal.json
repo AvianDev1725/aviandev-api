@@ -43,6 +43,13 @@
       "when": 1791779062340,
       "tag": "0005_cheerful_lila_cheney",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791779774164,
+      "tag": "0006_crazy_scalphunter",
+      "breakpoints": true
     }
   ]
 }

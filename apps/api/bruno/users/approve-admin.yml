@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/users/2/approve"
+  url: "{{baseUrl}}/users/4/approve"
   body:
     type: json
     data: |-

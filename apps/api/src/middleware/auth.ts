@@ -20,3 +20,5 @@ export const requireRole = (...roles: SessionUser['role'][]) =>
     }
     await next();
   });
+
+export const canWrite = [requireAuth, requireRole('admin', 'super_admin')] as const;

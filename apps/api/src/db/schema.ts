@@ -9,6 +9,7 @@ import {
   integer,
   jsonb,
   type AnyPgColumn,
+  primaryKey,
 } from 'drizzle-orm/pg-core';
 
 export const userRole = pgEnum('user_role', ['reader', 'admin', 'super_admin']);
@@ -64,3 +65,28 @@ export const invitations = pgTable('invitations', {
   acceptedAt: timestamp('accepted_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
+
+export const categories = pgTable('categories', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull().unique(),
+  slug: text('slug').notNull().unique(),
+  description: text('description').notNull().default(''),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at')
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+export const postCategories = pgTable(
+  'post_categories',
+  {
+    postId: integer('post_id')
+      .notNull()
+      .references(() => posts.id, { onDelete: 'cascade' }),
+    categoryId: integer('category_id')
+      .notNull()
+      .references(() => categories.id, { onDelete: 'cascade' }),
+  },
+  (table) => [primaryKey({ columns: [table.postId, table.categoryId] })]
+);

@@ -8,7 +8,7 @@ http:
   url: "{{baseUrl}}/invitations"
   body:
     type: json
-    data: '{"email":"guest@example.com","role":"admin"}'
+    data: '{"email":"jetiw70541@meinvr.com","role":"admin"}'
   auth: inherit
 
 settings:

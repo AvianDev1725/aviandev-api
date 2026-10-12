@@ -7,8 +7,10 @@ import {
   createPost,
   updatePost,
   deletePost,
-  getPostById
+  getPostById,
+  findMissingCategories
 } from './data/posts.js';
+import categoriesRoute from './routes/categories.js';
 import { validateJson } from './lib/validate.js';
 import { handleError } from './lib/error.js';
 import auth from './routes/auth.js';
@@ -29,11 +31,13 @@ app.route('/users', usersRoute);
 
 app.route('/invitations', invitationsRoute);
 
+app.route('/categories', categoriesRoute);
+
 app.get('/', (c) => c.text('Hello Hono!'));
 
 app.get('/health', (c) => c.json({ status: 'ok' }));
 
-app.get('/posts', async (c) => c.json(await getPublishedPosts()));
+app.get('/posts', async (c) => c.json(await getPublishedPosts(c.req.query('category'))));
 
 app.get('/posts/:slug', async (c) => {
   const post = await getPublishedPostBySlug(c.req.param('slug'));
@@ -43,6 +47,8 @@ app.get('/posts/:slug', async (c) => {
 
 app.post('/posts', ...canWrite, validateJson(createPostSchema), async (c) => {
   const body = c.req.valid('json');
+  const missing = await findMissingCategories(body.categoryIds);
+  if (missing.length > 0) return c.json({ error: `Unknown category: ${missing.join(', ')}` }, 400);
   const post = await createPost({ ...body, authorId: c.get('user').id });
   return c.json(post, 201);
 });
@@ -55,7 +61,13 @@ app.patch('/posts/:id', ...canWrite, validateJson(updatePostSchema), async (c) =
   if (!existing) return c.json({ error: 'Post not found' }, 404);
   if (!canEditPost(c.get('user'), existing)) return c.json({ error: 'Forbidden' }, 403);
 
-  const post = await updatePost(id, c.req.valid('json'));
+  const body = c.req.valid('json');
+  if (body.categoryIds) {
+    const missing = await findMissingCategories(body.categoryIds);
+    if (missing.length > 0) return c.json({ error: `Unknown category: ${missing.join(', ')}` }, 400);
+  }
+
+  const post = await updatePost(id, body);
   return c.json(post);
 });
 
