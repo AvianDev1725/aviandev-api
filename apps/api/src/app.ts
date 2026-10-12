@@ -17,6 +17,8 @@ import auth from './routes/auth.js';
 import usersRoute from './routes/users.js';
 import invitationsRoute from './routes/invitations.js';
 import contentModelsRoute from './routes/content-models.js';
+import contentRoute from './routes/content.js';
+import fragmentsRoute from './routes/content-fragments.js';
 
 const app = new Hono<AuthEnv>();
 
@@ -35,6 +37,8 @@ app.route('/invitations', invitationsRoute);
 app.route('/categories', categoriesRoute);
 
 app.route('/content-models', contentModelsRoute);
+app.route('/content', contentRoute);
+app.route('/content-fragments', fragmentsRoute);
 
 app.get('/', (c) => c.text('Hello Hono!'));
 

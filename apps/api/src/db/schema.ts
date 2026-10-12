@@ -104,3 +104,17 @@ export const contentModels = pgTable('content_models', {
     .defaultNow()
     .$onUpdate(() => new Date()),
 });
+
+export const contentFragments = pgTable('content_fragments', {
+  key: text('key').primaryKey(),
+  modelId: integer('model_id')
+    .notNull()
+    .references(() => contentModels.id, { onDelete: 'restrict' }),
+  data: jsonb('data').$type<Record<string, unknown>>().notNull(),
+  updatedBy: integer('updated_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at')
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});

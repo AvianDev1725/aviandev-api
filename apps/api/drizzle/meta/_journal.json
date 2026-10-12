@@ -57,6 +57,13 @@
       "when": 1791781330459,
       "tag": "0007_careful_karma",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791782466462,
+      "tag": "0008_special_synch",
+      "breakpoints": true
     }
   ]
 }
