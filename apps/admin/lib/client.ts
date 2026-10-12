@@ -1,11 +1,11 @@
 type Result<T> = { ok: true; data: T } | { ok: false; error: string };
 
-export async function postJson<T = unknown>(path: string, body: unknown): Promise<Result<T>> {
+async function callApi<T>(method: string, path: string, body?: unknown): Promise<Result<T>> {
   try {
     const res = await fetch(`/api${path}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      method,
+      headers: body === undefined ? undefined : { 'Content-Type': 'application/json' },
+      body: body === undefined ? undefined : JSON.stringify(body),
     });
     const data = await res.json().catch(() => ({}));
 
@@ -17,3 +17,6 @@ export async function postJson<T = unknown>(path: string, body: unknown): Promis
     return { ok: false, error: 'Could not reach the server. Is the API running?' };
   }
 }
+
+export const postJson = <T = unknown>(path: string, body: unknown) => callApi<T>('POST', path, body);
+export const deleteJson = <T = unknown>(path: string) => callApi<T>('DELETE', path);

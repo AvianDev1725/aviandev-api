@@ -9,6 +9,15 @@ const usersRoute = new Hono<AuthEnv>();
 
 usersRoute.use('*', requireAuth, requireRole('super_admin'));
 
+usersRoute.get('/', async (c) => {
+  const members = await db
+    .select({ id: users.id, name: users.name, email: users.email, role: users.role, createdAt: users.createdAt })
+    .from(users)
+    .where(eq(users.status, 'active'))
+    .orderBy(asc(users.createdAt));
+  return c.json(members);
+});
+
 usersRoute.get('/pending', async (c) => {
   const pending = await db
     .select({ id: users.id, name: users.name, email: users.email, createdAt: users.createdAt })
@@ -33,6 +42,7 @@ usersRoute.post('/:id/approve', async (c) => {
 
   const user = await reviewRequest(id, c.get('user').id, 'active');
   if (!user) return c.json({ error: 'No pending request with this id' }, 404);
+
   await sendEmail({ to: user.email, ...emails.approved(user.name) });
   return c.json(user);
 });
@@ -43,8 +53,21 @@ usersRoute.post('/:id/reject', async (c) => {
 
   const user = await reviewRequest(id, c.get('user').id, 'rejected');
   if (!user) return c.json({ error: 'No pending request with this id' }, 404);
+
   await sendEmail({ to: user.email, ...emails.rejected(user.name) });
   return c.json(user);
+});
+
+usersRoute.delete('/:id', async (c) => {
+  const id = Number(c.req.param('id'));
+  if (Number.isNaN(id)) return c.json({ error: 'Invalid id' }, 400);
+  if (id === c.get('user').id) {
+    return c.json({ error: "You can't delete your own account" }, 400);
+  }
+
+  const [deleted] = await db.delete(users).where(eq(users.id, id)).returning({ id: users.id });
+  if (!deleted) return c.json({ error: 'User not found' }, 404);
+  return c.body(null, 204);
 });
 
 export default usersRoute;
