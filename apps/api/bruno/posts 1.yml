@@ -10,8 +10,12 @@ http:
     type: json
     data: |-
       {
-        "title": "My first draft",
-        "slug": "my-first-draft"
+        "title": "Getting started with GSAP",
+        "slug": "getting-started-with-gsap",
+        "published": true,
+        "categoryIds": [
+          4
+        ]
       }
   auth: inherit
 

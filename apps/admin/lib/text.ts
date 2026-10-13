@@ -10,3 +10,7 @@ export function toSlug(value: string) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
+export function formatDate(value: string) {
+  return new Date(value).toLocaleDateString('en-IN', { dateStyle: 'medium' });
+}

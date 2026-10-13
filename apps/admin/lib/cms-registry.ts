@@ -7,6 +7,7 @@ import { modelsText } from '../app/(dashboard)/models/text';
 import { contentText, richTextText } from '../app/(dashboard)/content/text';
 import { emailKeys, emailText } from '../../api/src/content/email-text';
 import { categoriesText } from '../app/(dashboard)/categories/text';
+import { postsText } from '../app/(dashboard)/posts/text';
 
 export type CmsEntry = {
   key: string;
@@ -99,5 +100,11 @@ export const cmsRegistry: CmsEntry[] = [
     name: 'Admin: categories page',
     description: 'Adding, editing and deleting categories. Placeholders: {count}, {name}.',
     fallback: categoriesText,
+  },
+  {
+    key: 'admin-posts',
+    name: 'Admin: posts list',
+    description: 'The list of posts, with filters and statuses. Placeholders: {count}, {date}, {name}, {title}.',
+    fallback: postsText,
   },
 ];

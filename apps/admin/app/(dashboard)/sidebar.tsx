@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, LogOut, PanelLeftClose, PanelLeftOpen, Users, Blocks, FileText, Tags, type LucideIcon } from 'lucide-react';
+import { LayoutDashboard, LogOut, PanelLeftClose, PanelLeftOpen, Users, Blocks, FileText, Tags, Newspaper, type LucideIcon } from 'lucide-react';
 
 type Role = 'reader' | 'admin' | 'super_admin';
 
@@ -25,6 +25,7 @@ export type SidebarLabels = {
   navigation: string;
   models: string;
   content: string;
+  posts: string;
 };
 
 type SidebarProps = {
@@ -40,6 +41,7 @@ export default function Sidebar({ user, labels, initialCollapsed }: SidebarProps
 
   const items: NavItem[] = [
     { href: '/', label: labels.dashboard, icon: LayoutDashboard },
+    { href: '/posts', label: labels.posts, icon: Newspaper },
     { href: '/content', label: labels.content, icon: FileText },
     { href: '/categories', label: labels.categories, icon: Tags },
     { href: '/models', label: labels.models, icon: Blocks, roles: ['super_admin'] },
