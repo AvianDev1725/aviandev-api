@@ -8,6 +8,7 @@ import { contentText, richTextText } from '../app/(dashboard)/content/text';
 import { emailKeys, emailText } from '../../api/src/content/email-text';
 import { categoriesText } from '../app/(dashboard)/categories/text';
 import { postEditorText, postsText } from '../app/(dashboard)/posts/text';
+import { homeText, siteText } from '../../web/app/text';
 
 export type CmsEntry = {
   key: string;
@@ -112,5 +113,17 @@ export const cmsRegistry: CmsEntry[] = [
     name: 'Admin: post editor',
     description: 'Writing and publishing posts. Placeholders: {count}, {max}.',
     fallback: postEditorText,
+  },
+    {
+    key: 'web-site',
+    name: 'Blog: site-wide text',
+    description: 'Site name, tagline and footer, used on every page of the blog.',
+    fallback: siteText,
+  },
+  {
+    key: 'web-home',
+    name: 'Blog: home page',
+    description: 'Text on the blog home page.',
+    fallback: homeText,
   },
 ];

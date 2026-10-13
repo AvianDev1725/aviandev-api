@@ -1,0 +1,11 @@
+{
+  "name": "@aviandev/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./text": "./src/text.ts",
+    "./content": "./src/content.ts",
+    "./revalidate": "./src/revalidate.ts"
+  }
+}

@@ -6,6 +6,7 @@
     "dev": "pnpm -r --parallel dev",
     "dev:api": "pnpm --filter aviandev-api dev",
     "dev:admin": "pnpm --filter admin dev",
-    "test:api": "pnpm --filter aviandev-api test"
+    "test:api": "pnpm --filter aviandev-api test",
+    "dev:web": "pnpm --filter web dev"
   }
 }
