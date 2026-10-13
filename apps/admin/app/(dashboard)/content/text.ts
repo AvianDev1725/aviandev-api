@@ -41,6 +41,8 @@ export const richTextText = {
   link: 'Add or edit link',
   unlink: 'Remove link',
   linkPrompt: 'Link address (https://… or /page). Leave empty to remove the link.',
+  codeLanguage: 'Code language',
+  plainText: 'Plain text',
 };
 
 export type ContentText = typeof contentText;

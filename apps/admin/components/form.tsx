@@ -22,10 +22,15 @@ type FieldProps = {
   type?: string;
   autoComplete?: string;
   hint?: string;
+  error?: string;
   disabled?: boolean;
 };
 
-export function Field({ id, label, value, onChange, type = 'text', autoComplete, hint, disabled }: FieldProps) {
+export function Field({ id, label, value, onChange, type = 'text', autoComplete, hint, error, disabled }: FieldProps) {
+  const hintId = hint ? `${id}-hint` : undefined;
+  const errorId = error ? `${id}-error` : undefined;
+  const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined;
+
   return (
     <div className="space-y-1">
       <label htmlFor={id} className="text-sm font-medium text-zinc-700">
@@ -37,13 +42,21 @@ export function Field({ id, label, value, onChange, type = 'text', autoComplete,
         autoComplete={autoComplete}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        aria-describedby={hint ? `${id}-hint` : undefined}
         disabled={disabled}
-        className="disabled:bg-zinc-100 disabled:text-zinc-500 w-full rounded-lg border border-zinc-300 px-3 py-2 text-zinc-900 outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900"
+        aria-describedby={describedBy}
+        aria-invalid={error ? true : undefined}
+        className={`w-full rounded-lg border px-3 py-2 text-zinc-900 outline-none focus:ring-1 disabled:bg-zinc-100 disabled:text-zinc-500 ${
+          error ? 'border-red-500 focus:border-red-600 focus:ring-red-600' : 'border-zinc-300 focus:border-zinc-900 focus:ring-zinc-900'
+        }`}
       />
       {hint && (
-        <p id={`${id}-hint`} className="text-xs text-zinc-500">
+        <p id={hintId} className="text-xs text-zinc-500">
           {hint}
+        </p>
+      )}
+      {error && (
+        <p id={errorId} className="text-sm text-red-600">
+          {error}
         </p>
       )}
     </div>

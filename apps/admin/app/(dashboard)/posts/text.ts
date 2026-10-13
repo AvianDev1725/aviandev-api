@@ -21,3 +21,37 @@ export const postsText = {
 };
 
 export type PostsText = typeof postsText;
+
+export const postEditorText = {
+  newTitle: 'New post',
+  editTitle: 'Edit post',
+  backToPosts: 'Back to posts',
+  statusDraft: 'Draft',
+  statusPublished: 'Published',
+  titleLabel: 'Title',
+  titleRequired: 'Enter a title',
+  slugLabel: 'Slug',
+  slugHelp: 'The post’s address, e.g. /posts/my-first-post.',
+  slugLiveWarning: 'This post is live. Changing the slug will break existing links to it.',
+  excerptLabel: 'Excerpt',
+  excerptHelp: 'A short summary shown in post lists and search results.',
+  excerptCount: '{count} of {max} characters',
+  categoriesLabel: 'Categories',
+  noCategories: 'No categories yet.',
+  manageCategories: 'Add categories',
+  contentLabel: 'Content',
+  saveDraft: 'Save draft',
+  update: 'Update',
+  publish: 'Publish',
+  unpublish: 'Unpublish',
+  saving: 'Saving…',
+  saved: 'Saved',
+  justPublished: 'Published. Your post is live.',
+  justUnpublished: 'Moved back to drafts.',
+  delete: 'Delete post',
+  deleteConfirm: "Delete this post? This can't be undone.",
+  fixErrors: 'Fix the highlighted fields and try again.',
+  errorFallback: 'Something went wrong. Check your connection and try again.',
+};
+
+export type PostEditorText = typeof postEditorText;

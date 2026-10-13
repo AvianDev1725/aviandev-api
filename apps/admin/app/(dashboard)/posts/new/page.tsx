@@ -1,0 +1,16 @@
+import { apiGet } from '@/lib/api';
+import { getManyByCMS } from '@/lib/content';
+import { richTextText } from '../../content/text';
+import PostEditor, { type Category } from '../post-editor';
+import { postEditorText } from '../text';
+
+export const instant = false;
+
+export default async function NewPostPage() {
+  const [categories, cms] = await Promise.all([
+    apiGet<Category[]>('/categories').then((list) => list ?? []),
+    getManyByCMS({ 'admin-post-editor': postEditorText, 'admin-rich-text': richTextText }),
+  ]);
+
+  return <PostEditor text={cms['admin-post-editor']} richText={cms['admin-rich-text']} categories={categories} />;
+}
