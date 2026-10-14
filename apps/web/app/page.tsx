@@ -2,20 +2,29 @@ import Link from 'next/link';
 import { formatDate } from '@aviandev/core/text';
 import { getManyByCMS } from '@/lib/content';
 import { getPosts } from '@/lib/posts';
-import { homeText, siteText } from './text';
+import Banner from '@/components/banner';
+import { homeBanner, homeText, siteText } from './text';
 
 export default async function HomePage() {
   const [text, posts] = await Promise.all([
-    getManyByCMS({ 'web-site': siteText, 'web-home': homeText }),
+    getManyByCMS({ 'web-site': siteText, 'web-home': homeText, 'home-banner': homeBanner }),
     getPosts(),
   ]);
   const site = text['web-site'];
   const home = text['web-home'];
+  const banner = text['home-banner'];
+  const latest = posts.slice(0, Math.max(1, Math.floor(banner.postsPerPage)));
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
-      <h1 className="text-4xl font-bold tracking-tight">{site.siteName}</h1>
-      <p className="mt-3 text-lg text-zinc-600">{site.tagline}</p>
+      {banner.title ? (
+        <Banner banner={banner} />
+      ) : (
+        <>
+          <h1 className="text-4xl font-bold tracking-tight">{site.siteName}</h1>
+          <p className="mt-3 text-lg text-zinc-600">{site.tagline}</p>
+        </>
+      )}
 
       <section aria-labelledby="latest-heading" className="mt-14">
         <h2 id="latest-heading" className="text-xl font-semibold">

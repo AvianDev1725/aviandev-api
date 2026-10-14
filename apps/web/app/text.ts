@@ -9,3 +9,15 @@ export const homeText = {
   latestPosts: 'Latest posts',
   empty: 'No posts yet. Check back soon.',
 };
+
+export const homeBanner = {
+  title: '',
+  subtitle: '',
+  body: '',
+  image: '',
+  imageAlt: '',
+  link: '',
+  linkLabel: '',
+  showButton: false,
+  postsPerPage: 6,
+};
