@@ -165,3 +165,17 @@ describe('content and dates', () => {
     expect(row.updatedAt.getTime()).toBeGreaterThan(new Date(created.updatedAt).getTime());
   });
 });
+
+describe('public reading', () => {
+  it('leaves content out of the list, but includes it and the author on the post', async () => {
+    const content = { type: 'doc', content: [] };
+    await create({ title: 'A', slug: 'a', published: true, content });
+
+    const [item] = await (await app.request('/posts')).json();
+    expect(item.content).toBeUndefined();
+
+    const post = await (await app.request('/posts/a')).json();
+    expect(post.content).toEqual(content);
+    expect(post.authorName).toBe('Test User');
+  });
+});

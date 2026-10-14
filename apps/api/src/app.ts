@@ -21,6 +21,7 @@ import contentRoute from './routes/content.js';
 import fragmentsRoute from './routes/content-fragments.js';
 import { canEditPost } from './lib/permissions.js';
 import adminPostsRoute from './routes/admin-posts.js';
+import { notifyPostsChanged } from './lib/revalidate.js';
 
 const app = new Hono<AuthEnv>();
 
@@ -57,6 +58,7 @@ app.post('/posts', ...canWrite, validateJson(createPostSchema), async (c) => {
   const missing = await findMissingCategories(body.categoryIds);
   if (missing.length > 0) return c.json({ error: `Unknown category: ${missing.join(', ')}` }, 400);
   const post = await createPost({ ...body, authorId: c.get('user').id });
+  if (post.published) notifyPostsChanged([post.slug]);
   return c.json(post, 201);
 });
 
@@ -75,6 +77,7 @@ app.patch('/posts/:id', ...canWrite, validateJson(updatePostSchema), async (c) =
   }
 
   const post = await updatePost(id, body);
+  if (existing.published || post.published) notifyPostsChanged([existing.slug, post.slug]);
   return c.json(post);
 });
 
@@ -87,6 +90,7 @@ app.delete('/posts/:id', ...canWrite, async (c) => {
   if (!canEditPost(c.get('user'), existing)) return c.json({ error: 'Forbidden' }, 403);
 
   await deletePost(id);
+  if (existing.published) notifyPostsChanged([existing.slug]);
   return c.body(null, 204);
 });
 

@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, sql } from 'drizzle-orm';
+import { and, desc, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { categories, postCategories, posts, users } from '../db/schema.js';
 
@@ -37,6 +37,15 @@ export async function findMissingCategories(ids: number[]) {
   return ids.filter((id) => !foundIds.has(id));
 }
 
+const summaryColumns = {
+  id: posts.id,
+  title: posts.title,
+  slug: posts.slug,
+  excerpt: posts.excerpt,
+  publishedAt: posts.publishedAt,
+  updatedAt: posts.updatedAt,
+};
+
 export async function getPublishedPosts(categorySlug?: string) {
   const conditions = [eq(posts.published, true)];
 
@@ -50,7 +59,7 @@ export async function getPublishedPosts(categorySlug?: string) {
   }
 
   const rows = await db
-    .select()
+    .select(summaryColumns)
     .from(posts)
     .where(and(...conditions))
     .orderBy(desc(posts.publishedAt));
@@ -59,8 +68,9 @@ export async function getPublishedPosts(categorySlug?: string) {
 
 export async function getPublishedPostBySlug(slug: string) {
   const rows = await db
-    .select()
+    .select({ ...getTableColumns(posts), authorName: users.name })
     .from(posts)
+    .leftJoin(users, eq(posts.authorId, users.id))
     .where(and(eq(posts.slug, slug), eq(posts.published, true)));
   const [post] = await attachCategories(rows);
   return post;
