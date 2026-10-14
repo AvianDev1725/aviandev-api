@@ -21,3 +21,10 @@ export const homeBanner = {
   showButton: false,
   postsPerPage: 6,
 };
+
+export const postText = {
+  allPosts: 'All posts',
+  byAuthor: 'By {name}',
+  published: 'Published',
+  updated: 'Updated',
+};

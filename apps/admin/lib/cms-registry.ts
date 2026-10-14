@@ -8,7 +8,7 @@ import { contentText, richTextText } from '../app/(dashboard)/content/text';
 import { emailKeys, emailText } from '../../api/src/content/email-text';
 import { categoriesText } from '../app/(dashboard)/categories/text';
 import { postEditorText, postsText } from '../app/(dashboard)/posts/text';
-import { homeText, siteText } from '../../web/app/text';
+import { homeText, postText, siteText } from '../../web/app/text';
 
 export type CmsEntry = {
   key: string;
@@ -114,7 +114,7 @@ export const cmsRegistry: CmsEntry[] = [
     description: 'Writing and publishing posts. Placeholders: {count}, {max}.',
     fallback: postEditorText,
   },
-    {
+  {
     key: 'web-site',
     name: 'Blog: site-wide text',
     description: 'Site name, tagline and footer, used on every page of the blog.',
@@ -125,5 +125,11 @@ export const cmsRegistry: CmsEntry[] = [
     name: 'Blog: home page',
     description: 'Text on the blog home page.',
     fallback: homeText,
+  },
+  {
+    key: 'web-post',
+    name: 'Blog: post page',
+    description: 'Labels on a blog post page. Placeholder: {name}.',
+    fallback: postText,
   },
 ];
